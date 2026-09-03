@@ -18,6 +18,17 @@ class Settings(BaseSettings):
     max_pages: int = 500
     # In-memory rate limit for auth endpoints (per IP). Fine for a single-instance deploy.
     auth_rate_limit_per_minute: int = 20
+    # OTP + email (Gmail app password by default). Set these for email OTP to work.
+    otp_minutes: int = 5
+    email_from: str = ""  # e.g. "you@gmail.com"
+    email_host: str = "smtp.gmail.com"
+    email_port: int = 587
+    email_username: str = ""  # gmail address
+    email_password: str = ""  # app password (not normal password)
+    email_enabled: bool = False
+
+    def otp_ttl_seconds(self) -> int:
+        return self.otp_minutes * 60
 
     def resolved_secret_key(self) -> str:
         return self.secret_key or secrets.token_hex(32)

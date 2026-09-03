@@ -12,5 +12,6 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    # nullable: OTP-registered users have no password (only email-verified accounts)
+    hashed_password = Column(String, nullable=True)
     created_at = Column(DateTime, server_default=func.now())

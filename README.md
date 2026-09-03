@@ -36,6 +36,16 @@ docker compose up --build
 - `SECRET_KEY` — JWT signing key. **No hardcoded default ships**; if unset a random key is generated at startup (sessions reset on restart). Set a persistent random value in prod.
 - `FRONTEND_ORIGIN` — comma-separated allowed CORS origins (default `http://localhost:3000`).
 - `BING_API_KEY` — web plagiarism search (optional; reference-doc matching works without it)
+- Email OTP (login/register by email code). Set `EMAIL_ENABLED=true` and configure Gmail app password:
+  - `EMAIL_FROM` — sender address (e.g. `you@gmail.com`)
+  - `EMAIL_USERNAME` — your Gmail address
+  - `EMAIL_PASSWORD` — a **Gmail App Password** (Google Account → Security → 2-Step Verification → App passwords), not your normal login
+- `OTP_MINUTES` — OTP validity window (default `5`)
+
+OTP flow: `POST /api/auth/request-otp` (emails a 6-digit code, creating an account on first use) →
+`POST /api/auth/verify-otp` (code → JWT). OTP accounts have no password; password login won't work
+for them. The in-memory OTP store is single-instance only (codes are lost on restart / don't span
+multiple workers) — swap for Redis if you scale out.
 
 ## Production deploy (Render)
 The included `render.yaml` deploys the API as a Docker web service with a managed Postgres
