@@ -1,0 +1,8 @@
+# Full production stack: Postgres + Celery/Redis + torch-based signals.
+# Add these to requirements.txt on a target that has prebuilt wheels (Apple Silicon / Linux).
+asyncpg==0.30.0
+celery[redis]==5.4.0
+redis==5.2.1
+sentence-transformers==3.4.1
+transformers==4.48.0
+torch
