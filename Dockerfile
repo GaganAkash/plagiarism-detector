@@ -15,4 +15,5 @@ COPY . .
 
 RUN python -m spacy download en_core_web_sm
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# prod-style start: no --reload; worker count via WEB_CONCURRENCY (default 1).
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers ${WEB_CONCURRENCY:-1}"]

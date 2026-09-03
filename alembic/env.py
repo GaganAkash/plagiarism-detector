@@ -7,13 +7,16 @@ from app.config import settings
 from app.models.user import Base
 from app.models.document import Document
 from app.models.result import Scan
+from app.db import _async_url
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# ponytail: use app settings URL so SQLite/Postgres both work
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# ponytail: use app settings URL so SQLite/Postgres both work; normalize postgres://
+# (Render-style) to the asyncpg dialect the async migration engine requires.
+URL = _async_url(settings.database_url)
+config.set_main_option("sqlalchemy.url", URL)
 
 target_metadata = Base.metadata
 
@@ -33,7 +36,7 @@ def do_run_migrations(connection):
 
 async def run_async_migrations():
     cfg = config.get_section(config.config_ini_section, {})
-    cfg["sqlalchemy.url"] = settings.database_url
+    cfg["sqlalchemy.url"] = URL
     connectable = async_engine_from_config(
         cfg,
         prefix="sqlalchemy.",

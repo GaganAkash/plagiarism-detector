@@ -32,9 +32,24 @@ docker compose up --build
 `requirements-full.txt` adds torch, sentence-transformers, transformers, asyncpg, celery, redis.
 
 ## Config (.env)
-- `DATABASE_URL` — default `sqlite+aiosqlite:///plagcheck.db`; set Postgres URL for prod
+- `DATABASE_URL` — default `sqlite+aiosqlite:///plagcheck.db`. For Postgres, set a `postgres://` or `postgresql+asyncpg://` URL (asyncpg dialect is auto-added).
+- `SECRET_KEY` — JWT signing key. **No hardcoded default ships**; if unset a random key is generated at startup (sessions reset on restart). Set a persistent random value in prod.
+- `FRONTEND_ORIGIN` — comma-separated allowed CORS origins (default `http://localhost:3000`).
 - `BING_API_KEY` — web plagiarism search (optional; reference-doc matching works without it)
-- `SECRET_KEY` — JWT signing key, change in production
+
+## Production deploy (Render)
+The included `render.yaml` deploys the API as a Docker web service with a managed Postgres
+and a `preDeployCommand` (`alembic upgrade head`) that runs migrations before startup.
+Connect the GitHub repo on Render, set env vars in the dashboard:
+- `SECRET_KEY` — long random value (e.g. `openssl rand -hex 32`)
+- `FRONTEND_ORIGIN` — the deployed frontend origin (`https://<your-app>.onrender.com`, etc.)
+
+Production start (no `--reload`, workers via `WEB_CONCURRENCY`):
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers ${WEB_CONCURRENCY:-1}
+```
+
+Auth endpoints are rate-limited per IP (default 20/min; `AUTH_RATE_LIMIT_PER_MINUTE`).
 
 ## Tests
 ```bash
