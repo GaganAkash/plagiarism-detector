@@ -1,55 +1,48 @@
 "use client";
 
 import { useState } from "react";
-import { apiPost, saveSession } from "../lib/api";
+import { API_URL, apiPost, saveSession } from "../lib/api";
 
 export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => void }) {
-  const [step, setStep] = useState<"email" | "code">("email");
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
 
-  const normalizedEmail = email.trim().toLowerCase();
-
-  const requestCode = async () => {
-    if (!normalizedEmail) return setError("Enter your email");
+  const submit = async () => {
+    if (!email || !password) return setError("Enter email and password");
     setBusy(true);
     setError("");
     setOk("");
     try {
-      const r = await apiPost("/api/auth/request-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: normalizedEmail }),
-      });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.detail || "Failed to send code");
-      setStep("code");
-      setOk(j.message || "Check your inbox for the code");
-    } catch (e: any) {
-      setError(e.message || String(e));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const verifyCode = async () => {
-    if (!code) return setError("Enter the code from your email");
-    setBusy(true);
-    setError("");
-    setOk("");
-    try {
-      const r = await apiPost("/api/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: normalizedEmail, code }),
-      });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.detail || "Verification failed");
-      saveSession(j.access_token, normalizedEmail);
-      onAuthed(j.access_token);
+      let token: string;
+      if (mode === "register") {
+        const r = await apiPost("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.detail || "Registration failed");
+        token = j.access_token;
+        setOk("Account created — welcome!");
+      } else {
+        const body = new URLSearchParams();
+        body.set("username", email);
+        body.set("password", password);
+        const r = await fetch(`${API_URL}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.detail || "Login failed");
+        token = j.access_token;
+      }
+      saveSession(token, email);
+      onAuthed(token);
     } catch (e: any) {
       setError(e.message || String(e));
     } finally {
@@ -68,43 +61,29 @@ export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => v
         <div className="brand">
           <span className="logo">✦</span>
           <h1>Plagiarism &amp; AI Detector</h1>
-          <p className="sub">Sign in with your email — we'll send you a code</p>
+          <p className="sub">Sign in to manage documents &amp; scans</p>
         </div>
 
-        {step === "email" ? (
-          <>
-            <label>Email</label>
-            <input
-              type="email" placeholder="you@example.com" value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && requestCode()}
-              autoFocus
-            />
-            <button className="primary" onClick={requestCode} disabled={busy}>
-              {busy ? <span className="spin">⟳</span> : "Send me a code"}
-            </button>
-          </>
-        ) : (
-          <>
-            <p className="sub" style={{ marginBottom: 8 }}>
-              Code sent to <strong>{normalizedEmail}</strong>.{" "}
-              <a role="button" tabIndex={0} onClick={() => { setStep("email"); setOk(""); }} style={{ color: "#00e5ff", cursor: "pointer" }}>
-                Change email
-              </a>
-            </p>
-            <label>6-digit code</label>
-            <input
-              type="text" inputMode="numeric" placeholder="000000" value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              maxLength={6}
-              onKeyDown={(e) => e.key === "Enter" && verifyCode()}
-              autoFocus
-            />
-            <button className="primary" onClick={verifyCode} disabled={busy}>
-              {busy ? <span className="spin">⟳</span> : "Verify & sign in"}
-            </button>
-          </>
-        )}
+        <div className="tabs">
+          <button className={`tab ${mode === "login" ? "on" : ""}`} onClick={() => { setMode("login"); setError(""); }}>Login</button>
+          <button className={`tab ${mode === "register" ? "on" : ""}`} onClick={() => { setMode("register"); setError(""); }}>Register</button>
+        </div>
+
+        <label>Email</label>
+        <input
+          type="email" placeholder="you@example.com" value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <label>Password</label>
+        <input
+          type="password" placeholder="••••••••" value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && submit()}
+        />
+
+        <button className="primary" onClick={submit} disabled={busy}>
+          {busy ? <span className="spin">⟳</span> : mode === "login" ? "Sign in" : "Create account"}
+        </button>
 
         {ok && <p className="ok">{ok}</p>}
         {error && <p className="err">{error}</p>}
