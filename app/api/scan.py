@@ -23,6 +23,7 @@ class ScanOut(BaseModel):
     scan_number: int | None = None
     document_id: int
     status: str
+    progress: int = 0
     plagiarism_score: float | None = None
     ai_score: float | None = None
     plagiarism_details: dict | None = None

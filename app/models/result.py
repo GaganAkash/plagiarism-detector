@@ -10,6 +10,7 @@ class Scan(Base):
     document_id = Column(Integer, ForeignKey("documents.id"), nullable=False)
     scan_number = Column(Integer, nullable=False)  # per-user scan number (1, 2, 3, ...)
     status = Column(String, default="pending")  # pending, processing, completed, failed
+    progress = Column(Integer, default=0)  # 0-100, reported so UI can show a live progress bar
     plagiarism_score = Column(Float, nullable=True)
     ai_score = Column(Float, nullable=True)
     plagiarism_details = Column(JSON, nullable=True)

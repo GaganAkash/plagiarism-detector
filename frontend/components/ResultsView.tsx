@@ -7,6 +7,7 @@ type Scan = {
   id: number;
   scan_number: number | null;
   status: string;
+  progress: number;
   plagiarism_score: number | null;
   ai_score: number | null;
   plagiarism_details: any;
@@ -19,6 +20,9 @@ const VERDICTS: Record<string, { label: string; color: string }> = {
   likely_ai: { label: "Likely AI", color: "#ff4d6d" },
   inconclusive: { label: "Inconclusive", color: "#ffb300" },
 };
+
+const STAGES = ["Queued", "Analyzing structure", "Searching the web", "Checking plagiarism", "Checking AI signals", "Finishing"];
+const stage = (p: number) => p < 10 ? 0 : p < 60 ? 2 : p < 85 ? 3 : p < 95 ? 4 : 5;
 
 export default function ResultsView({ scanId, token }: { scanId: number; token: string }) {
   const [scan, setScan] = useState<Scan | null>(null);
@@ -92,6 +96,15 @@ export default function ResultsView({ scanId, token }: { scanId: number; token: 
         )}
       </div>
 
+      {(scan.status === "pending" || scan.status === "processing") && (
+        <div className="prog">
+          <div className="prog-top">
+            <b className="cap">{STAGES[stage(scan.progress)]}</b>
+            <span className="mono">{scan.progress}%</span>
+          </div>
+          <div className="bar bar-lg"><span style={{ width: `${Math.max(4, scan.progress)}%` }} /></div>
+        </div>
+      )}
       {scan.status === "completed" && (
         <div>
           <div className="gauges">
@@ -181,6 +194,11 @@ export default function ResultsView({ scanId, token }: { scanId: number; token: 
         .sig-detail a { color: #8fe8ff; text-decoration: none; }
         .quote { margin-top: 0.5rem; font-size: 0.85rem; color: #d6f6ff; font-style: italic; }
         .none { color: #6fa6b8; font-size: 0.85rem; text-align: center; padding: 1rem 0; }
+
+        .prog { margin: 1rem 0 0.6rem; }
+        .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; font-size: 0.85rem; }
+        .bar-lg { height: 12px; }
+        .bar-lg span { transition: width 0.8s ease; box-shadow: 0 0 14px rgba(0,229,255,0.8); }
 
         .loading { text-align: center; padding: 2.5rem 1rem; color: #6fa6b8; }
         .pulse { display: inline-block; width: 46px; height: 46px; border-radius: 50%; border: 4px solid rgba(0,229,255,0.2); border-top-color: #00e5ff; animation: rot 1s linear infinite; box-shadow: 0 0 18px rgba(0,229,255,0.35); }

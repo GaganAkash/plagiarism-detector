@@ -22,11 +22,17 @@ async def process_scan(scan_id: int):
             return
         scan, doc = row
 
-        await db.execute(update(Scan).where(Scan.id == scan.id).values(status="processing"))
-        await db.commit()
+        async def set_progress(pct: int):
+            await db.execute(
+                update(Scan).where(Scan.id == scan.id).values(status="processing", progress=pct)
+            )
+            await db.commit()
+
+        await set_progress(5)
 
         try:
             # ponytail: same-user docs as reference corpus; web search optional via BING_API_KEY
+            await set_progress(10)
             ref_result = await db.execute(
                 select(Document.extracted_text).where(
                     Document.user_id == doc.user_id, Document.id != doc.id
@@ -34,19 +40,24 @@ async def process_scan(scan_id: int):
             )
             refs = ref_result.scalars().all()
 
+            await set_progress(30)
             web_matches = search_web(doc.extracted_text)
+            await set_progress(60)
             pl_result: PlagiarismResult = scan_plagiarism(doc.extracted_text, refs)
             pl_result.matches.extend(web_matches)
             # Score reflects ALL evidence (reference + web); web matches must count.
             pl_result.score = aggregate_score(pl_result.matches)
+            await set_progress(85)
 
             ai_result = scan_ai(doc.extracted_text)
+            await set_progress(95)
 
             await db.execute(
                 update(Scan)
                 .where(Scan.id == scan.id)
                 .values(
                     status="completed",
+                    progress=100,
                     plagiarism_score=pl_result.score,
                     ai_score=ai_result.score,
                     plagiarism_details={
