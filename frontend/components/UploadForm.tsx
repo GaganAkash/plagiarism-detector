@@ -97,25 +97,25 @@ export default function UploadForm({
 
       <style jsx>{`
         .dropzone {
-          border: 2px dashed rgba(109,198,255,0.35);
+          border: 2px dashed rgba(47,174,115,0.35);
           border-radius: 16px;
           padding: 2rem 1.2rem;
           text-align: center;
           cursor: pointer;
           transition: all 0.2s ease;
-          background: rgba(109,198,255,0.04);
+          background: rgba(47,174,115,0.04);
           margin-bottom: 1rem;
         }
-        .dropzone:hover { border-color: rgba(109,198,255,0.7); background: rgba(109,198,255,0.08); }
-        .dropzone.dragging { border-color: #ffd54a; background: rgba(255,213,74,0.14); box-shadow: 0 0 22px rgba(109,198,255,0.35); transform: scale(1.01); }
-        .dz-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; color: #ffd98a; }
+        .dropzone:hover { border-color: rgba(47,174,115,0.7); background: rgba(47,174,115,0.08); }
+        .dropzone.dragging { border-color: #86c880; background: rgba(134,200,128,0.14); box-shadow: 0 0 22px rgba(47,174,115,0.35); transform: scale(1.01); }
+        .dz-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; color: #a6e08e; }
         .dz-title { font-size: 1.02rem; font-weight: 600; }
-        .dz-sub { font-size: 0.82rem; color: #a594d6; margin-top: 0.2rem; }
+        .dz-sub { font-size: 0.82rem; color: #93bd9f; margin-top: 0.2rem; }
         .file-chip { display: flex; align-items: center; gap: 0.8rem; text-align: left; }
         .f-icon { font-size: 1.6rem; }
         .f-name { font-weight: 600; font-size: 0.95rem; word-break: break-all; }
-        .f-sub { font-size: 0.8rem; color: #a594d6; }
-        .f-x { margin-left: auto; cursor: pointer; color: #a594d6; padding: 0.3rem 0.6rem; border-radius: 8px; }
+        .f-sub { font-size: 0.8rem; color: #93bd9f; }
+        .f-x { margin-left: auto; cursor: pointer; color: #93bd9f; padding: 0.3rem 0.6rem; border-radius: 8px; }
         .f-x:hover { color: #ff7b7b; background: rgba(255,255,255,0.08); }
         .spin { display: inline-block; animation: rot 0.9s linear infinite; margin-right: 0.4rem; }
         @keyframes rot { to { transform: rotate(360deg); } }
