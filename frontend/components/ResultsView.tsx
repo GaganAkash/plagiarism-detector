@@ -135,7 +135,11 @@ export default function ResultsView({ scanId, token }: { scanId: number; token: 
                       <span className="mono sig-val">{(m.score * 100).toFixed(0)}%</span>
                     </div>
                     <p className="sig-detail">
-                      {m.source && <a href={m.source} target="_blank" rel="noreferrer">source ↗</a>}
+                      {m.match_type === "web" && m.source ? (
+                        <a href={m.source} target="_blank" rel="noreferrer">source ↗</a>
+                      ) : (
+                        m.match_type === "reference" && "Matched against your reference documents"
+                      )}
                     </p>
                     <div className="quote">“{m.text}”</div>
                   </div>
