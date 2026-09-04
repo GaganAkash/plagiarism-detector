@@ -36,26 +36,30 @@ class PlagiarismResult:
     matches: list = field(default_factory=list)
 
 
+def aggregate_score(matches: list[Match]) -> float:
+    """Single plagiarism score from all match evidence (reference + web)."""
+    if not matches:
+        return 0.0
+    return round(min(1.0, sum(m.score for m in matches) / len(matches)), 3)
+
+
 def scan_plagiarism(text: str, reference_docs: list[str] | None = None) -> PlagiarismResult:
     matches = []
-    chunk_scores = []
 
     if reference_docs:
         for ref in reference_docs:
             score = _tfidf_similarity(text, ref)
             if score > 0.5:
                 matches.append(Match(text=_top_match_excerpt(text, ref), score=score, source="reference", match_type="reference"))
-                chunk_scores.append(score)
 
     semantic_scores = _semantic_similarity(text, reference_docs or [])
     for i, score in enumerate(semantic_scores):
         if score > 0.65 and reference_docs:
             matches.append(Match(text=_top_match_excerpt_embed(text, reference_docs[i]), score=score, source="reference", match_type="paraphrase"))
-            chunk_scores.append(score)
 
-    score = min(1.0, sum(chunk_scores) / len(chunk_scores)) if chunk_scores else 0.0
+    score = aggregate_score(matches)
     matches.sort(key=lambda m: m.score, reverse=True)
-    return PlagiarismResult(score=round(score, 3), matches=matches[:10])
+    return PlagiarismResult(score=score, matches=matches[:10])
 
 
 def _tfidf_similarity(text_a: str, text_b: str) -> float:

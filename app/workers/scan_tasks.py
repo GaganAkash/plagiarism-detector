@@ -5,7 +5,7 @@ from sqlalchemy import select, update
 from app.db import async_session
 from app.models.result import Scan
 from app.models.document import Document
-from app.services.plagiarism import scan_plagiarism, PlagiarismResult
+from app.services.plagiarism import aggregate_score, scan_plagiarism, PlagiarismResult
 from app.services.ai_detection import scan_ai
 from app.services.web_search import search_web
 
@@ -37,6 +37,8 @@ async def process_scan(scan_id: int):
             web_matches = search_web(doc.extracted_text)
             pl_result: PlagiarismResult = scan_plagiarism(doc.extracted_text, refs)
             pl_result.matches.extend(web_matches)
+            # Score reflects ALL evidence (reference + web); web matches must count.
+            pl_result.score = aggregate_score(pl_result.matches)
 
             ai_result = scan_ai(doc.extracted_text)
 

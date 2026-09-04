@@ -41,3 +41,23 @@ def test_paraphrase_detected():
     paraphrase = "Rising sea levels and extreme weather events are caused by climate change."
     result = mp.scan_plagiarism(paraphrase, [original])
     assert result.score > 0.5
+
+
+def test_aggregate_score_no_matches_is_zero():
+    assert mp.aggregate_score([]) == 0.0
+
+
+def test_web_matches_count_toward_score_with_no_reference_docs():
+    # Regression: web matches were appended to the match list but never affected the
+    # score. A doc with web matches and zero reference docs now reports a real score.
+    from app.services.plagiarism import Match
+
+    web_matches = [
+        Match(text="snippet a", score=0.9, source="https://example.com/a", match_type="web"),
+        Match(text="snippet b", score=0.7, source="https://example.com/b", match_type="web"),
+    ]
+    result = mp.scan_plagiarism("A genuinely novel essay with no reference corpus.", [])
+    result.matches.extend(web_matches)
+    combined = mp.aggregate_score(result.matches)
+    assert combined > 0.5  # undiluted by zero-score reference path
+    assert combined == round((0.9 + 0.7) / 2, 3)
