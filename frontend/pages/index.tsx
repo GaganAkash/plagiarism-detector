@@ -126,7 +126,7 @@ export default function Home() {
 
         /* Krishna decorative motifs */
         .logo .flute { width: 3rem; height: 1.9rem; margin-right: 0.2rem; vertical-align: -0.1rem; }
-        .feather-circle { position: fixed; left: 50%; bottom: -38vh; transform: translateX(-50%); z-index: 0; width: 76vh; height: 76vh; opacity: 0.12; pointer-events: none; animation: featherSpin 46s linear infinite; }
+        .feather-circle { position: fixed; left: 50%; bottom: -51vw; transform: translateX(-50%); z-index: 0; width: 100vw; height: 100vw; opacity: 0.12; pointer-events: none; animation: featherSpin 46s linear infinite; }
         @keyframes featherSpin { to { transform: translateX(-50%) rotate(360deg); } }
 
         /* glass surface */
