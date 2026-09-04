@@ -5,6 +5,7 @@ from sqlalchemy import select
 from jose import JWTError, jwt
 import bcrypt
 from datetime import datetime, timedelta
+from email.utils import parseaddr
 from pydantic import BaseModel
 from app.db import get_db
 from app.models.user import User
@@ -35,6 +36,18 @@ def create_token(user_id: int) -> str:
     )
 
 
+def validate_email(email: str) -> bool:
+    """Basic format sanity check. Rejects obvious garbage; does NOT prove deliverability."""
+    name, addr = parseaddr(email or "")
+    if name:
+        return False  # reject display-name form like 'Foo <a@b.com>' from this field
+    addr = addr.strip()
+    local, _, domain = addr.partition("@")
+    if addr.count("@") != 1 or not local or not domain or "." not in domain or ".." in local:
+        return False
+    return True
+
+
 async def get_current_user(
     token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
 ) -> User:
@@ -56,6 +69,8 @@ async def register(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(rate_limit(settings.auth_rate_limit_per_minute)),
 ):
+    if not validate_email(req.email):
+        raise HTTPException(status_code=422, detail="Invalid email address")
     result = await db.execute(select(User).where(User.email == req.email))
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already registered")
