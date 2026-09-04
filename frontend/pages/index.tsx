@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import UploadForm from "../components/UploadForm";
 import ResultsView from "../components/ResultsView";
 import HistoryView from "../components/HistoryView";
+import { Flute, PeacockFeather, Om } from "../components/KrishnaDeco";
 import LoginPage from "./login";
 import { API_URL, getToken, getEmail, clearSession } from "../lib/api";
 
@@ -48,11 +49,14 @@ export default function Home() {
         <span className="blob b4" />
         <span className="stars" />
         <span className="grid" />
+        <Om className="om" />
+        <PeacockFeather className="feather feather-l" />
+        <PeacockFeather className="feather feather-r" />
       </div>
 
       <header className="nav glass">
         <div className="brand">
-          <span className="logo">✦</span>
+          <span className="logo"><Flute className="flute" />✦</span>
           <h1>Plagiarism &amp; AI Detector</h1>
         </div>
         <div className="nav-right">
@@ -121,6 +125,13 @@ export default function Home() {
           background-size: 48px 48px; mask-image: linear-gradient(to top, #000 0%, transparent 90%); -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 90%);
           animation: gridmove 3s linear infinite; }
         @keyframes gridmove { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 0 0; } }
+
+        /* Krishna decorative motifs */
+        .om { position: fixed; right: 3vw; bottom: 2vh; z-index: 0; width: 220px; height: 220px; opacity: 0.5; pointer-events: none; }
+        .feather { position: fixed; z-index: 0; height: 58vh; opacity: 0.08; pointer-events: none; filter: saturate(1.2); }
+        .feather-l { left: -5vw; bottom: 0; }
+        .feather-r { right: -4vw; bottom: 0; transform: scaleX(-1); }
+        .logo .flute { width: 1.9rem; height: 0.65rem; margin-right: 0.2rem; vertical-align: -0.05rem; }
 
         /* glass surface */
         .glass {

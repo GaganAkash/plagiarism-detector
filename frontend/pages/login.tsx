@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { API_URL, apiPost, saveSession } from "../lib/api";
+import { Flute, PeacockFeather, Om } from "../components/KrishnaDeco";
 
 export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => void }) {
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -55,11 +56,14 @@ export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => v
       <div className="blobs" aria-hidden>
         <span className="blob b1" /><span className="blob b2" /><span className="blob b3" />
         <span className="stars" /><span className="grid" />
+        <Om className="om" />
+        <PeacockFeather className="feather feather-l" />
+        <PeacockFeather className="feather feather-r" />
       </div>
 
       <div className="card glass">
         <div className="brand">
-          <span className="logo">✦</span>
+          <span className="logo"><Flute className="flute" />✦</span>
           <h1>Plagiarism &amp; AI Detector</h1>
           <p className="sub">Sign in to manage documents &amp; scans</p>
         </div>
@@ -132,6 +136,11 @@ export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => v
           background-image: linear-gradient(rgba(109,198,255,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(109,198,255,0.22) 1px, transparent 1px);
           background-size: 48px 48px; mask-image: linear-gradient(to top, #000 0%, transparent 90%); -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 90%); animation: gridmove 3s linear infinite; }
         @keyframes gridmove { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 0 0; } }
+        .om { position: fixed; right: 12vw; top: 8vh; z-index: 0; width: 200px; height: 200px; opacity: 0.45; pointer-events: none; }
+        .feather { position: fixed; z-index: 0; height: 70vh; opacity: 0.07; pointer-events: none; filter: saturate(1.2); }
+        .feather-l { left: -6vw; bottom: 0; }
+        .feather-r { right: -5vw; bottom: 0; transform: scaleX(-1); }
+        .logo .flute { width: 2.3rem; height: 0.8rem; margin-right: 0.2rem; vertical-align: 0.05rem; }
         .glass { background: rgba(255,255,255,0.06); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border: 1px solid rgba(109,198,255,0.18); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.35); }
         .primary { position: relative; overflow: hidden; border: none; cursor: pointer; color: #1c0f33; padding: 0.85rem 1.2rem; border-radius: 14px; width: 100%; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg,#6dc6ff,#ffd54a); transition: transform 0.15s ease, box-shadow 0.25s ease, filter 0.2s; box-shadow: 0 0 22px rgba(109,198,255,0.45); }
         .primary:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
