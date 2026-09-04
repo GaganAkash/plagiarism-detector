@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import UploadForm from "../components/UploadForm";
 import ResultsView from "../components/ResultsView";
 import HistoryView from "../components/HistoryView";
-import { Flute } from "../components/KrishnaDeco";
+import { Flute, FeatherCircle } from "../components/KrishnaDeco";
 import LoginPage from "./login";
 import { API_URL, getToken, getEmail, clearSession } from "../lib/api";
 
@@ -49,6 +49,7 @@ export default function Home() {
         <span className="blob b4" />
         <span className="stars" />
         <span className="grid" />
+        <FeatherCircle className="feather-circle" />
       </div>
 
       <header className="nav glass">
@@ -124,7 +125,9 @@ export default function Home() {
         @keyframes gridmove { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 0 0; } }
 
         /* Krishna decorative motifs */
-        .logo .flute { width: 1.9rem; height: 0.65rem; margin-right: 0.2rem; vertical-align: -0.05rem; }
+        .logo .flute { width: 1.9rem; height: 0.85rem; margin-right: 0.2rem; vertical-align: -0.05rem; }
+        .feather-circle { position: fixed; left: 50%; bottom: -18vh; transform: translateX(-50%); z-index: 0; width: 70vh; height: 70vh; opacity: 0.10; pointer-events: none; animation: featherSpin 46s linear infinite; }
+        @keyframes featherSpin { to { transform: translateX(-50%) rotate(360deg); } }
 
         /* glass surface */
         .glass {

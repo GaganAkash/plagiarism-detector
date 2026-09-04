@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { API_URL, apiPost, saveSession } from "../lib/api";
-import { Flute } from "../components/KrishnaDeco";
+import { Flute, FeatherCircle } from "../components/KrishnaDeco";
 
 export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => void }) {
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -56,6 +56,7 @@ export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => v
       <div className="blobs" aria-hidden>
         <span className="blob b1" /><span className="blob b2" /><span className="blob b3" />
         <span className="stars" /><span className="grid" />
+        <FeatherCircle className="feather-circle" />
       </div>
 
       <div className="card glass">
@@ -133,7 +134,9 @@ export default function LoginPage({ onAuthed }: { onAuthed: (token: string) => v
           background-image: linear-gradient(rgba(47,174,115,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(47,174,115,0.22) 1px, transparent 1px);
           background-size: 48px 48px; mask-image: linear-gradient(to top, #000 0%, transparent 90%); -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 90%); animation: gridmove 3s linear infinite; }
         @keyframes gridmove { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 0 0; } }
-        .logo .flute { width: 2.3rem; height: 0.8rem; margin-right: 0.2rem; vertical-align: 0.05rem; }
+        .logo .flute { width: 2.3rem; height: 1rem; margin-right: 0.2rem; vertical-align: 0.05rem; }
+        .feather-circle { position: fixed; left: 50%; bottom: -16vh; transform: translateX(-50%); z-index: 0; width: 80vh; height: 80vh; opacity: 0.10; pointer-events: none; animation: featherSpin 46s linear infinite; }
+        @keyframes featherSpin { to { transform: translateX(-50%) rotate(360deg); } }
         .glass { background: rgba(255,255,255,0.06); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border: 1px solid rgba(47,174,115,0.18); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.35); }
         .primary { position: relative; overflow: hidden; border: none; cursor: pointer; color: #0a2418; padding: 0.85rem 1.2rem; border-radius: 14px; width: 100%; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg,#2fae73,#86c880); transition: transform 0.15s ease, box-shadow 0.25s ease, filter 0.2s; box-shadow: 0 0 22px rgba(47,174,115,0.45); }
         .primary:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
