@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from pydantic import BaseModel
 
 from app.db import get_db
@@ -15,6 +15,7 @@ router = APIRouter()
 
 class ScanOut(BaseModel):
     id: int
+    scan_number: int | None = None
     document_id: int
     status: str
     plagiarism_score: float | None = None
@@ -38,7 +39,17 @@ async def create_scan(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    scan = Scan(document_id=doc.id, status="pending")
+    count_result = await db.execute(
+        select(func.count()).select_from(Scan).where(Scan.user_id == user.id)
+    )
+    next_number = (count_result.scalar() or 0) + 1
+
+    scan = Scan(
+        user_id=user.id,
+        document_id=doc.id,
+        scan_number=next_number,
+        status="pending",
+    )
     db.add(scan)
     await db.commit()
     await db.refresh(scan)

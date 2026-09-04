@@ -5,6 +5,7 @@ import { API_URL } from "../lib/api";
 
 type Scan = {
   id: number;
+  scan_number: number | null;
   status: string;
   plagiarism_score: number | null;
   ai_score: number | null;
@@ -47,7 +48,7 @@ export default function ResultsView({ scanId, token }: { scanId: number; token: 
     if (!scan || scan.ai_score == null) return;
     const lines = [
       `Plagiarism & AI Detection Report`,
-      `Scan #${scan.id}`,
+      `Scan #${scan.scan_number ?? scan.id}`,
       `AI Likelihood: ${(scan.ai_score * 100).toFixed(0)}%`,
       `Plagiarism: ${((scan.plagiarism_score ?? 0) * 100).toFixed(0)}%`,
     ];
@@ -83,7 +84,7 @@ export default function ResultsView({ scanId, token }: { scanId: number; token: 
     <div className="card glass fade-in">
       <div className="head">
         <div>
-          <h2>Scan #{scan.id}</h2>
+          <h2>Scan #{scan.scan_number ?? scan.id}</h2>
           <p className="sub">Status: <b className="cap">{scan.status}</b></p>
         </div>
         {scan.status === "completed" && (

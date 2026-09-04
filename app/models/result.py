@@ -6,7 +6,9 @@ class Scan(Base):
     __tablename__ = "scans"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     document_id = Column(Integer, ForeignKey("documents.id"), nullable=False)
+    scan_number = Column(Integer, nullable=False)  # per-user scan number (1, 2, 3, ...)
     status = Column(String, default="pending")  # pending, processing, completed, failed
     plagiarism_score = Column(Float, nullable=True)
     ai_score = Column(Float, nullable=True)
