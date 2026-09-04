@@ -54,7 +54,7 @@ export default function Home() {
 
       <header className="nav glass">
         <div className="brand">
-          <span className="logo"><Flute className="flute" />✦</span>
+          <span className="logo"><Flute className="flute" /></span>
           <h1>Plagiarism &amp; AI Detector</h1>
         </div>
         <div className="nav-right">
@@ -125,8 +125,8 @@ export default function Home() {
         @keyframes gridmove { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 0 0; } }
 
         /* Krishna decorative motifs */
-        .logo .flute { width: 1.9rem; height: 0.85rem; margin-right: 0.2rem; vertical-align: -0.05rem; }
-        .feather-circle { position: fixed; left: 50%; bottom: -18vh; transform: translateX(-50%); z-index: 0; width: 70vh; height: 70vh; opacity: 0.10; pointer-events: none; animation: featherSpin 46s linear infinite; }
+        .logo .flute { width: 3rem; height: 1.9rem; margin-right: 0.2rem; vertical-align: -0.1rem; }
+        .feather-circle { position: fixed; left: 50%; bottom: -38vh; transform: translateX(-50%); z-index: 0; width: 76vh; height: 76vh; opacity: 0.12; pointer-events: none; animation: featherSpin 46s linear infinite; }
         @keyframes featherSpin { to { transform: translateX(-50%) rotate(360deg); } }
 
         /* glass surface */
