@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -11,6 +13,9 @@ from app.api.auth import get_current_user
 from app.workers.scan_tasks import process_scan
 
 router = APIRouter()
+
+# Hold references so in-flight background tasks aren't garbage-collected.
+_background_tasks: set[asyncio.Task] = set()
 
 
 class ScanOut(BaseModel):
@@ -54,8 +59,12 @@ async def create_scan(
     await db.commit()
     await db.refresh(scan)
 
-    await process_scan(scan.id)
-    await db.refresh(scan)
+    # Run analysis in the background so the POST returns immediately (status=pending);
+    # the frontend polls GET /api/scan/{id} until it reaches "completed".
+    task = asyncio.create_task(process_scan(scan.id))
+    _background_tasks.add(task)
+    task.add_done_callback(_background_tasks.discard)
+
     return scan
 
 
